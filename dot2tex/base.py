@@ -160,7 +160,7 @@ def parse_drawstring(drawstring):
     cmdlist = []
     stat = {}
     idx = 0
-    s = drawstring.strip().replace('\\', '')
+    s = drawstring.strip().replace('\\\\', '\\')
     while idx < len(s) - 1:
         didx = 1
         c = s[idx]
@@ -364,7 +364,6 @@ class DotConvBase(object):
     def do_draw_op(self, drawoperations, drawobj, stat, texlbl_name="texlbl", use_drawstring_pos=False):
         """Excecute the operations in drawoperations"""
         s = ""
-        done_text = False
         for drawop in drawoperations:
             op = drawop[0]
             style = getattr(drawobj, 'style', None)
@@ -391,7 +390,7 @@ class DotConvBase(object):
                 s += self.set_style(drawop)
             elif op in ['B']:
                 s += self.draw_bezier(drawop, style)
-            elif op in ['T'] and not done_text:
+            elif op in ['T']:
                 # Need to decide what to do with the text
                 # Note that graphviz removes the \ character from the draw
                 # string. Use \\ instead
@@ -400,10 +399,6 @@ class DotConvBase(object):
                 text = drawop[5]
                 # head and tail label
                 texmode = self.options.get('texmode', 'verbatim')
-                label = drawobj.attr.get('label', '')
-                if label:
-                    text = label
-                    done_text = True
                 if drawobj.attr.get('texmode', ''):
                     texmode = drawobj.attr['texmode']
                 if texlbl_name in drawobj.attr:
@@ -416,8 +411,6 @@ class DotConvBase(object):
                 elif texmode == 'math':
                     # math mode
                     text = "$%s$" % text
-                elif label and len(drawoperations) == 1:
-                    text = label
 
                 drawop[5] = text
                 if self.options.get('alignstr', ''):
