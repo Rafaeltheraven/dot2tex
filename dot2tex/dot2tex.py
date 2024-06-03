@@ -284,7 +284,7 @@ def main(run_as_module=False, dotdata=None, options=None):
         if run_as_module:
             pass
         else:
-            hdlr = logging.FileHandler('dot2tex.log')
+            hdlr = logging.FileHandler('dot2tex_run.log')
             log.addHandler(hdlr)
             formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
             hdlr.setFormatter(formatter)

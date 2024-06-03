@@ -1035,15 +1035,15 @@ class TeXDimProc:
 
     def parse_log_file(self):
         logfilename = os.path.splitext(self.tempfilename)[0] + '.log'
-        tmpdir = os.getcwd()
-        os.chdir(os.path.split(logfilename)[0])
+        currdir = os.getcwd()
+        tmpdir = os.path.split(logfilename)[0]
+        os.chdir(tmpdir)
         if self.options.get('usepdflatex'):
-            command = 'pdflatex -interaction=nonstopmode %s' % self.tempfilename
+            command = 'pdflatex -interaction=nonstopmode -output-directory=%s %s' % (tmpdir, self.tempfilename)
         else:
-            command = 'latex -interaction=nonstopmode %s' % self.tempfilename
+            command = 'latex -interaction=nonstopmode -output-directory=%s %s' % (tmpdir, self.tempfilename)
         log.debug('Running command: %s' % command)
-
-        p = Popen(command, shell=True, stdout=PIPE, stderr=PIPE, close_fds=(sys.platform != 'win32'))
+        p = Popen(command, shell=True, stdout=PIPE, stderr=PIPE, cwd=tmpdir, close_fds=(sys.platform != 'win32'))
         (stdout, stderr) = (p.stdout, p.stderr)
         try:
             data = stdout.read()
@@ -1063,7 +1063,7 @@ class TeXDimProc:
         with open(logfilename, 'r') as f:
             logdata = f.read()
         log.debug('Logfile from LaTeX run: \n' + logdata)
-        os.chdir(tmpdir)
+        os.chdir(currdir)
 
         texdimdata = self.dimext_re.findall(logdata)
         log.debug('Texdimdata: ' + str(texdimdata))
