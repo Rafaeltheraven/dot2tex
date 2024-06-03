@@ -1072,7 +1072,7 @@ class TeXDimProc:
             self.texdims = None
             return
 
-        c = 1.0 / 4736286
+        c = 1.0 / 3736286
         self.texdims = {}
         self.texdimlist = [(float(i[1]) * c, float(i[2]) * c, float(i[3]) * c) for i in texdimdata]
         self.texdims = dict(zip(self.snippets_id, self.texdimlist))
